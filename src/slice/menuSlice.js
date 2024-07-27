@@ -20,5 +20,5 @@ export const menuSlice = createSlice({
     }
 })
 
-export const { menuItemClick } = menuSlice.actions;
+export const { menuItemClick, actionItemClick } = menuSlice.actions;
 export default menuSlice.reducer;
