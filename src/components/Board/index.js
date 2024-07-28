@@ -1,11 +1,13 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { MENU_ITEMS } from "@/constants";
-import { menuItemClick, actionItemClick } from "@/slice/menuSlice";
+import { actionItemClick } from "@/slice/menuSlice";
 
 const Board = () => {
     const dispatch = useDispatch();
     const canvasRef = useRef(null);
+    const drawHistory = useRef([]);
+    const drawHistoryIndex = useRef(0);
     const shouldDraw = useRef(false);
     const {activeMenuItem, actionMenuItem} = useSelector((state) => state.menu);
     const {color, size} = useSelector((state) => state.toolbox[activeMenuItem]);
@@ -22,6 +24,14 @@ const Board = () => {
             anchor.download = 'canvas-image.jpg';
             anchor.click();
             // console.log(URL);
+        } else if (actionMenuItem === MENU_ITEMS.UNDO) {
+            if (drawHistoryIndex.current > 0) drawHistoryIndex.current--;
+            const imageData = drawHistory.current[drawHistoryIndex.current];
+            context.putImageData(imageData, 0, 0);
+        } else if (actionMenuItem === MENU_ITEMS.REDO) {
+            if (drawHistoryIndex.current < drawHistory.current.length - 1) drawHistoryIndex.current++;
+            const imageData = drawHistory.current[drawHistoryIndex.current];
+            context.putImageData(imageData, 0, 0);
         }
 
         dispatch(actionItemClick(null));
@@ -71,6 +81,9 @@ const Board = () => {
 
         const handleMouseUp = () => {
             shouldDraw.current = false;
+            const imgData = context.getImageData(0, 0, canvas.width, canvas.height); 
+            drawHistory.current.push(imgData);
+            drawHistoryIndex.current = drawHistory.current.length - 1;
         };
 
         canvas.addEventListener("mousedown", handleMouseDown);
