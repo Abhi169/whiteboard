@@ -1,22 +1,32 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencil, faEraser, faRotateLeft, faRotateRight, faFileArrowDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPencil,
+  faEraser,
+  faRotateLeft,
+  faRotateRight,
+  faFileArrowDown,
+} from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 
-import styles from './index.module.css';
+import styles from "./index.module.css";
 import { MENU_ITEMS } from "@/constants";
 import { menuItemClick, actionItemClick } from "@/slice/menuSlice";
-import cx from 'classnames';
+import cx from "classnames";
+import { socket } from "@/socket";
 
 const Menu = () => {
   const dispatch = useDispatch();
   const activeMenuItem = useSelector((state) => state.menu.activeMenuItem);
+
   const handleMenuClick = (itemName) => {
-    dispatch(menuItemClick(itemName))
-  }
+    dispatch(menuItemClick(itemName));
+    //console.log("Item", itemName);
+    socket.emit("toolChange", itemName);
+  };
 
   const handleActionItemClick = (itemName) => {
-    dispatch(actionItemClick(itemName))
-  }
+    dispatch(actionItemClick(itemName));
+  };
 
   return (
     <div className={styles.menuContainer}>
@@ -59,6 +69,5 @@ const Menu = () => {
     </div>
   );
 };
-
 
 export default Menu;

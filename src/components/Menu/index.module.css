@@ -16,5 +16,9 @@
             color: theme('colors.text1');
             font-size: 20px;
         }
+
+        @media screen and (max-width: 640px) {
+            width: 75%;
+        }
     }
 }
